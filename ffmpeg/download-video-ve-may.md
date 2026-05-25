@@ -131,6 +131,33 @@
 # Hiểu đúng bản chất kỹ thuật của các công cụ liên quan (N_m3u8DL-RE, mp4decrypt, ffmpeg).
 
 # Sửa sai ngay lập tức khi xử lý link phức tạp (như việc dán trực tiếp link token m3u8 thay vì để chữ placeholder URL_M3U8_CUA_ONG), giảm thiểu tối đa thao tác thủ công cho ông.
+# Fix FFmpeg HLS stream on Windows CMD where URLs contain '&' parameters and HLS segments are served through PHP endpoints without proper extensions.
+## Requirements:
+* Escape '&' in CMD using '^&'
+* Force FFmpeg to treat input as HLS using '-f hls'
+* Allow nested HLS segment loading from PHP URLs
+* Disable strict extension checking using:
+  -allowed_extensions ALL
+  -extension_picky 0
+* Enable protocols:
+  -protocol_whitelist file,http,https,tcp,tls,crypto
+* Use stream copy:
+  -c copy
+* Merge separate video/audio inputs:
+  -map 0:v -map 1:a
+* Output MKV with dynamic Windows CMD variables using delayed expansion
+
+* Return final working Windows CMD one-line command.
+
+* Quan trọng nhất:
+
+-extension_picky 0
+
+* và mọi ký tự & trong URL bắt buộc phải là:
+
+^&
+
+* không thì CMD sẽ cắt lệnh.
 
 # FFmpeg TV360
 
